@@ -1,21 +1,131 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 const {
   calculatePlanetaryPositions,
-  createDate
-} = require('vedic-astrology-api/lib/utils/common');
+  createDate,
+} = require("vedic-astrology-api/lib/utils/common");
 const {
   computeMahadashaSequence,
   computeBhuktisForMahadasha,
-  computePratyantarsForBhukti,
-  getCurrentDasha
-} = require('../utils/vimshottari');
+  getCurrentDasha,
+} = require("../utils/vimshottari");
+
+/**
+ * POST /api/vimshottari
+ * Calculate Vimshottari Dasha (accepts POST body with parameters)
+ */
+router.post("/", (req, res) => {
+  try {
+    const {
+      year,
+      month,
+      day,
+      hour = 0,
+      minute = 0,
+      lat,
+      lon,
+      tz = 5.5,
+      endpoint = "complete",
+    } = req.body;
+
+    if (!year || !month || !day || lat === undefined || lon === undefined) {
+      return res.status(400).json({
+        error: "Missing required parameters: year, month, day, lat, lon",
+      });
+    }
+
+    const date = createDate(year, month, day, hour, minute, tz);
+    const { positions } = calculatePlanetaryPositions(date, lat, lon);
+    const moonLong = positions.Moon.longitude;
+
+    let result;
+
+    if (endpoint === "mahadashas") {
+      const mahadashas = computeMahadashaSequence(date, moonLong);
+      result = {
+        input: { year, month, day, hour, minute, lat, lon, tz },
+        moonLongitude: moonLong,
+        mahadashas: mahadashas.map((m) => ({
+          lord: m.lord,
+          start: m.start.toISOString(),
+          end: m.end.toISOString(),
+          years: m.years.toFixed(2),
+        })),
+      };
+    } else if (endpoint === "current") {
+      const targetDate = req.body.targetDate
+        ? new Date(req.body.targetDate)
+        : new Date();
+      const current = getCurrentDasha(date, moonLong, targetDate);
+
+      if (current.error) {
+        return res.status(400).json(current);
+      }
+
+      result = {
+        birthDate: date.toISOString(),
+        targetDate: targetDate.toISOString(),
+        moonLongitude: moonLong,
+        current: {
+          mahadasha: {
+            lord: current.mahadasha.lord,
+            start: current.mahadasha.start.toISOString(),
+            end: current.mahadasha.end.toISOString(),
+          },
+          bhukti: {
+            lord: current.bhukti.subLord,
+            start: current.bhukti.start.toISOString(),
+            end: current.bhukti.end.toISOString(),
+          },
+          pratyantar: current.pratyantar
+            ? {
+                lord: current.pratyantar.pratyantarLord,
+                start: current.pratyantar.start.toISOString(),
+                end: current.pratyantar.end.toISOString(),
+              }
+            : null,
+        },
+      };
+    } else {
+      // default: complete
+      const mahadashas = computeMahadashaSequence(date, moonLong);
+      const complete = mahadashas.map((maha) => {
+        const bhuktis = computeBhuktisForMahadasha(maha);
+        return {
+          lord: maha.lord,
+          start: maha.start.toISOString(),
+          end: maha.end.toISOString(),
+          years: maha.years.toFixed(2),
+          bhuktis: bhuktis.map((b) => ({
+            lord: b.subLord,
+            start: b.start.toISOString(),
+            end: b.end.toISOString(),
+            years: b.years.toFixed(3),
+          })),
+        };
+      });
+
+      result = {
+        input: { year, month, day, hour, minute, lat, lon, tz },
+        moonLongitude: moonLong,
+        dashaSystem: complete,
+      };
+    }
+
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res
+      .status(500)
+      .json({ error: err.message || "Error in Dasha calculation" });
+  }
+});
 
 /**
  * GET /api/vimshottari/mahadashas
  * Get complete Mahadasha sequence
  */
-router.get('/mahadashas', (req, res) => {
+router.get("/mahadashas", (req, res) => {
   try {
     const year = Number(req.query.year);
     const month = Number(req.query.month);
@@ -35,16 +145,18 @@ router.get('/mahadashas', (req, res) => {
     res.json({
       input: { year, month, day, hour, minute, lat, lon, tz },
       moonLongitude: moonLong,
-      mahadashas: mahadashas.map(m => ({
+      mahadashas: mahadashas.map((m) => ({
         lord: m.lord,
         start: m.start.toISOString(),
         end: m.end.toISOString(),
-        years: m.years.toFixed(2)
-      }))
+        years: m.years.toFixed(2),
+      })),
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: err.message || 'Error in Mahadasha calculation' });
+    res
+      .status(500)
+      .json({ error: err.message || "Error in Mahadasha calculation" });
   }
 });
 
@@ -52,7 +164,7 @@ router.get('/mahadashas', (req, res) => {
  * GET /api/vimshottari/bhuktis
  * Get Bhuktis for a specific Mahadasha
  */
-router.get('/bhuktis', (req, res) => {
+router.get("/bhuktis", (req, res) => {
   try {
     const year = Number(req.query.year);
     const month = Number(req.query.month);
@@ -72,7 +184,7 @@ router.get('/bhuktis', (req, res) => {
     const selectedMaha = mahadashas[mahaIndex];
 
     if (!selectedMaha) {
-      return res.status(400).json({ error: 'Invalid Mahadasha index' });
+      return res.status(400).json({ error: "Invalid Mahadasha index" });
     }
 
     const bhuktis = computeBhuktisForMahadasha(selectedMaha);
@@ -81,19 +193,21 @@ router.get('/bhuktis', (req, res) => {
       mahadasha: {
         lord: selectedMaha.lord,
         start: selectedMaha.start.toISOString(),
-        end: selectedMaha.end.toISOString()
+        end: selectedMaha.end.toISOString(),
       },
-      bhuktis: bhuktis.map(b => ({
+      bhuktis: bhuktis.map((b) => ({
         mahaLord: b.mahaLord,
         subLord: b.subLord,
         start: b.start.toISOString(),
         end: b.end.toISOString(),
-        years: b.years.toFixed(3)
-      }))
+        years: b.years.toFixed(3),
+      })),
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: err.message || 'Error in Bhukti calculation' });
+    res
+      .status(500)
+      .json({ error: err.message || "Error in Bhukti calculation" });
   }
 });
 
@@ -101,7 +215,7 @@ router.get('/bhuktis', (req, res) => {
  * GET /api/vimshottari/current
  * Get current running Dasha-Bhukti-Pratyantar
  */
-router.get('/current', (req, res) => {
+router.get("/current", (req, res) => {
   try {
     const year = Number(req.query.year);
     const month = Number(req.query.month);
@@ -135,23 +249,27 @@ router.get('/current', (req, res) => {
         mahadasha: {
           lord: current.mahadasha.lord,
           start: current.mahadasha.start.toISOString(),
-          end: current.mahadasha.end.toISOString()
+          end: current.mahadasha.end.toISOString(),
         },
         bhukti: {
           lord: current.bhukti.subLord,
           start: current.bhukti.start.toISOString(),
-          end: current.bhukti.end.toISOString()
+          end: current.bhukti.end.toISOString(),
         },
-        pratyantar: current.pratyantar ? {
-          lord: current.pratyantar.pratyantarLord,
-          start: current.pratyantar.start.toISOString(),
-          end: current.pratyantar.end.toISOString()
-        } : null
-      }
+        pratyantar: current.pratyantar
+          ? {
+              lord: current.pratyantar.pratyantarLord,
+              start: current.pratyantar.start.toISOString(),
+              end: current.pratyantar.end.toISOString(),
+            }
+          : null,
+      },
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: err.message || 'Error in current Dasha calculation' });
+    res
+      .status(500)
+      .json({ error: err.message || "Error in current Dasha calculation" });
   }
 });
 
@@ -159,7 +277,7 @@ router.get('/current', (req, res) => {
  * GET /api/vimshottari/complete
  * Get complete Dasha system (Maha + all Bhuktis)
  */
-router.get('/complete', (req, res) => {
+router.get("/complete", (req, res) => {
   try {
     const year = Number(req.query.year);
     const month = Number(req.query.month);
@@ -176,30 +294,32 @@ router.get('/complete', (req, res) => {
 
     const mahadashas = computeMahadashaSequence(date, moonLong);
 
-    const complete = mahadashas.map(maha => {
+    const complete = mahadashas.map((maha) => {
       const bhuktis = computeBhuktisForMahadasha(maha);
       return {
         lord: maha.lord,
         start: maha.start.toISOString(),
         end: maha.end.toISOString(),
         years: maha.years.toFixed(2),
-        bhuktis: bhuktis.map(b => ({
+        bhuktis: bhuktis.map((b) => ({
           lord: b.subLord,
           start: b.start.toISOString(),
           end: b.end.toISOString(),
-          years: b.years.toFixed(3)
-        }))
+          years: b.years.toFixed(3),
+        })),
       };
     });
 
     res.json({
       input: { year, month, day, hour, minute, lat, lon, tz },
       moonLongitude: moonLong,
-      dashaSystem: complete
+      dashaSystem: complete,
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: err.message || 'Error in complete Dasha calculation' });
+    res
+      .status(500)
+      .json({ error: err.message || "Error in complete Dasha calculation" });
   }
 });
 
