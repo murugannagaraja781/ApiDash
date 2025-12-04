@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ta">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vimshottari Dasha Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .current-dasha {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .dasha-item {
+            padding: 15px;
+            margin: 10px 0;
+            background: white;
+            border-left: 4px solid #667eea;
+            border-radius: 5px;
+        }
+
+        .loading {
+            text-align: center;
+            color: #667eea;
+            font-size: 18px;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🌟 Vimshottari Dasha Calculator</h1>
+
+        <form id="dashaForm">
+            <div class="row">
+                <div class="form-group">
+                    <label>வருடம் (Year)</label>
+                    <input type="number" id="year" value="1993" required>
+                </div>
+                <div class="form-group">
+                    <label>மாதம் (Month)</label>
+                    <input type="number" id="month" value="10" min="1" max="12" required>
+                </div>
+                <div class="form-group">
+                    <label>நாள் (Day)</label>
+                    <input type="number" id="day" value="29" min="1" max="31" required>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <label>மணி (Hour)</label>
+                    <input type="number" id="hour" value="6" min="0" max="23" required>
+                </div>
+                <div class="form-group">
+                    <label>நிமிடம் (Minute)</label>
+                    <input type="number" id="minute" value="45" min="0" max="59" required>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <label>Latitude</label>
+                    <input type="number" step="0.001" id="lat" value="8.964" required>
+                </div>
+                <div class="form-group">
+                    <label>Longitude</label>
+                    <input type="number" step="0.001" id="lon" value="77.315" required>
+                </div>
+                <div class="form-group">
+                    <label>Timezone</label>
+                    <input type="number" step="0.5" id="tz" value="5.5" required>
+                </div>
+            </div>
+
+            <button type="submit">கணக்கிடு (Calculate)</button>
+        </form>
+
+        <div class="loading" id="loading">⏳ கணக்கிடப்படுகிறது...</div>
+
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        document.getElementById('dashaForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const loading = document.getElementById('loading');
+            const result = document.getElementById('result');
+
+            loading.style.display = 'block';
+            result.style.display = 'none';
+
+            const params = new URLSearchParams({
+                year: document.getElementById('year').value,
+                month: document.getElementById('month').value,
+                day: document.getElementById('day').value,
+                hour: document.getElementById('hour').value,
+                minute: document.getElementById('minute').value,
+                lat: document.getElementById('lat').value,
+                lon: document.getElementById('lon').value,
+                tz: document.getElementById('tz').value
+            });
+
+            try {
+                const response = await fetch(`/api/vimshottari/current?${params}`);
+                const data = await response.json();
+
+                loading.style.display = 'none';
+                result.style.display = 'block';
+
+                const formatDate = (dateStr) => new Date(dateStr).toLocaleDateString('ta-IN', {
+                    year: 'numeric', month: 'long', day: 'numeric'
+                });
+
+                result.innerHTML = `
+                    <div class="current-dasha">
+                        <h2>🔮 இப்போது நடக்கும் தசா</h2>
+                        <h3>மகா தசா: ${data.current.mahadasha.lord}</h3>
+                        <p>${formatDate(data.current.mahadasha.start)} - ${formatDate(data.current.mahadasha.end)}</p>
+                        <h3>புக்தி: ${data.current.bhukti.lord}</h3>
+                        <p>${formatDate(data.current.bhukti.start)} - ${formatDate(data.current.bhukti.end)}</p>
+                        ${data.current.pratyantar ? `
+                            <h3>பிரத்யந்தர: ${data.current.pratyantar.lord}</h3>
+                            <p>${formatDate(data.current.pratyantar.start)} - ${formatDate(data.current.pratyantar.end)}</p>
+                        ` : ''}
+                    </div>
+                `;
+
+                // Get all mahadashas
+                const mahaResponse = await fetch(`/api/vimshottari/mahadashas?${params}`);
+                const mahaData = await mahaResponse.json();
+
+                result.innerHTML += '<h2>எல்லா மகா தசாக்கள்</h2>';
+                mahaData.mahadashas.forEach(maha => {
+                    result.innerHTML += `
+                        <div class="dasha-item">
+                            <strong>${maha.lord}</strong> - ${maha.years} வருடங்கள்<br>
+                            <small>${formatDate(maha.start)} - ${formatDate(maha.end)}</small>
+                        </div>
+                    `;
+                });
+
+            } catch (error) {
+                loading.style.display = 'none';
+                result.style.display = 'block';
+                result.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            }
+        });
+    </script>
+</body>
+
+</html>
