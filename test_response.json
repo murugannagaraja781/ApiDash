@@ -1,0 +1,122 @@
+{
+  "birthDetails": {
+    "date": "2025-12-04",
+    "time": "12:00",
+    "latitude": 13.0827,
+    "longitude": 80.2707,
+    "timezone": 5.5
+  },
+  "planetaryPositions": {
+    "detailed": {
+      "Sun": {
+        "longitude": 333.65,
+        "sign": "Pisces",
+        "degree": 3.65,
+        "minute": 38,
+        "nakshatra": "Uttara Bhadrapada",
+        "nakshatraPada": 1
+      },
+      "Moon": {
+        "longitude": 132.47,
+        "sign": "Leo",
+        "degree": 12.47,
+        "minute": 28,
+        "nakshatra": "Magha",
+        "nakshatraPada": 4
+      },
+      "Mars": {
+        "longitude": 22.71,
+        "sign": "Aries",
+        "degree": 22.71,
+        "minute": 42,
+        "nakshatra": "Bharani",
+        "nakshatraPada": 3
+      },
+      "Mercury": {
+        "longitude": 67.63,
+        "sign": "Gemini",
+        "degree": 7.63,
+        "minute": 38,
+        "nakshatra": "Ardra",
+        "nakshatraPada": 1
+      },
+      "Jupiter": {
+        "longitude": 110.38,
+        "sign": "Cancer",
+        "degree": 20.38,
+        "minute": 22,
+        "nakshatra": "Ashlesha",
+        "nakshatraPada": 2
+      },
+      "Venus": {
+        "longitude": 157.64,
+        "sign": "Virgo",
+        "degree": 7.64,
+        "minute": 38,
+        "nakshatra": "Uttara Phalguni",
+        "nakshatraPada": 4
+      },
+      "Saturn": {
+        "longitude": 202.64,
+        "sign": "Libra",
+        "degree": 22.64,
+        "minute": 38,
+        "nakshatra": "Vishakha",
+        "nakshatraPada": 1
+      },
+      "Rahu": {
+        "longitude": 248.70,
+        "sign": "Sagittarius",
+        "degree": 8.70,
+        "minute": 42,
+        "nakshatra": "Mula",
+        "nakshatraPada": 3
+      },
+      "Ketu": {
+        "longitude": 65.04,
+        "sign": "Gemini",
+        "degree": 5.04,
+        "minute": 2,
+        "nakshatra": "Mrigashira",
+        "nakshatraPada": 4
+      }
+    }
+  },
+  "ascendant": {
+    "longitude": 260.27,
+    "sign": "Sagittarius",
+    "degree": 20.27,
+    "minute": 16
+  },
+  "panchangam": {
+    "tithi": 13,
+    "tithiName": "Trayodashi",
+    "vara": "Thursday",
+    "nakshatra": "Magha",
+    "nakshatraPada": 4,
+    "yoga": "Dhriti",
+    "karana": 26
+  },
+  "dashaSystem": {
+    "current": {
+      "mahadasha": {
+        "lord": "Ketu",
+        "start": "2025-12-04",
+        "end": "2026-05-19",
+        "years": "0.45"
+      },
+      "bhukti": {
+        "lord": "Ketu",
+        "start": "2025-12-04",
+        "end": "2025-12-13",
+        "years": "0.03"
+      },
+      "pratyantar": {
+        "lord": "Venus",
+        "start": "2025-12-04",
+        "end": "2025-12-06",
+        "years": "0.00"
+      }
+    }
+  }
+}

@@ -3,6 +3,8 @@ const cors = require("cors");
 
 const app = express();
 const vimshottariRouter = require("./routes/vimshottari");
+const astrologyRouter = require("./routes/astrology");
+
 app.use(
   cors({
     origin: "*",
@@ -15,20 +17,23 @@ app.use(express.static("public"));
 
 // Routes
 app.use("/api/vimshottari", vimshottariRouter);
+app.use("/api/astrology", astrologyRouter);
 
 // API info endpoint
 app.get("/api", (req, res) => {
   res.json({
-    message: "Vedic Astrology Vimshottari Dasha API",
+    message: "Vedic Astrology API - Complete Astrology Data",
     endpoints: {
-      mahadashas:
-        "/api/vimshottari/mahadashas?year=1993&month=10&day=29&hour=6&minute=45&lat=8.964&lon=77.315&tz=5.5",
-      bhuktis:
-        "/api/vimshottari/bhuktis?year=1993&month=10&day=29&hour=6&minute=45&lat=8.964&lon=77.315&tz=5.5&mahaIndex=0",
-      current:
-        "/api/vimshottari/current?year=1993&month=10&day=29&hour=6&minute=45&lat=8.964&lon=77.315&tz=5.5",
-      complete:
-        "/api/vimshottari/complete?year=1993&month=10&day=29&hour=6&minute=45&lat=8.964&lon=77.315&tz=5.5",
+      complete: "/api/astrology/complete?year=1993&month=10&day=29&hour=6&minute=45&lat=8.964&lon=77.315&tz=5.5",
+      rasiChart: "/api/astrology/rasi-chart?year=1993&month=10&day=29&hour=6&minute=45&lat=8.964&lon=77.315",
+      navamsaChart: "/api/astrology/navamsa-chart?year=1993&month=10&day=29&hour=6&minute=45&lat=8.964&lon=77.315",
+      dasha: "/api/astrology/dasha?year=1993&month=10&day=29&hour=6&minute=45&lat=8.964&lon=77.315",
+      panchangam: "/api/astrology/panchangam?year=1993&month=10&day=29&hour=6&minute=45&lat=8.964&lon=77.315",
+      planetaryPositions: "/api/astrology/planetary-positions?year=1993&month=10&day=29&hour=6&minute=45&lat=8.964&lon=77.315",
+      vimshottariMahadashas: "/api/vimshottari/mahadashas?year=1993&month=10&day=29&hour=6&minute=45&lat=8.964&lon=77.315&tz=5.5",
+      vimshottariBhuktis: "/api/vimshottari/bhuktis?year=1993&month=10&day=29&hour=6&minute=45&lat=8.964&lon=77.315&tz=5.5&mahaIndex=0",
+      vimshottariCurrent: "/api/vimshottari/current?year=1993&month=10&day=29&hour=6&minute=45&lat=8.964&lon=77.315&tz=5.5",
+      vimshottariComplete: "/api/vimshottari/complete?year=1993&month=10&day=29&hour=6&minute=45&lat=8.964&lon=77.315&tz=5.5"
     },
   });
 });

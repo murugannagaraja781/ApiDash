@@ -1,0 +1,182 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║                  VEDIC ASTROLOGY API - ENDPOINTS SUMMARY                   ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+BASE URL: http://localhost:3000/api/astrology
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ 1. COMPLETE ASTROLOGY DATA                                                 │
+├────────────────────────────────────────────────────────────────────────────┤
+│ GET /complete                                                              │
+│                                                                            │
+│ Returns: All astrology data combined                                       │
+│ - Birth details                                                            │
+│ - Planetary positions (raw & detailed)                                     │
+│ - Ascendant (Lagna)                                                        │
+│ - Rasi Chart (D1)                                                          │
+│ - Navamsa Chart (D9)                                                       │
+│ - Panchangam (Tithi, Vara, Nakshatra, Yoga, Karana)                       │
+│ - Dasha System (Mahadasha, Bhukti, Pratyantar)                            │
+│ - Nakshatra Details                                                        │
+│                                                                            │
+│ Example:                                                                   │
+│ /complete?year=1993&month=10&day=29&hour=6&minute=45&lat=8.964&lon=77.315│
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ 2. RASI CHART (D1)                                                         │
+├────────────────────────────────────────────────────────────────────────────┤
+│ GET /rasi-chart                                                            │
+│                                                                            │
+│ Returns: Main birth chart with planetary positions                         │
+│ - 9 planets in zodiac signs                                                │
+│ - Degree, minute, second precision                                         │
+│ - Sign index and name                                                      │
+│                                                                            │
+│ Example:                                                                   │
+│ /rasi-chart?year=1993&month=10&day=29&hour=6&minute=45&lat=8.964&lon=77.315
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ 3. NAVAMSA CHART (D9)                                                      │
+├────────────────────────────────────────────────────────────────────────────┤
+│ GET /navamsa-chart                                                         │
+│                                                                            │
+│ Returns: Divisional chart for marriage & relationships                     │
+│ - Each sign divided into 9 parts (3°20' each)                              │
+│ - Navamsa number (1-9)                                                     │
+│ - Degree, minute, second precision                                         │
+│                                                                            │
+│ Example:                                                                   │
+│ /navamsa-chart?year=1993&month=10&day=29&hour=6&minute=45&lat=8.964&lon=77.315
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ 4. DASHA SYSTEM                                                            │
+├────────────────────────────────────────────────────────────────────────────┤
+│ GET /dasha                                                                 │
+│                                                                            │
+│ Returns: Vimshottari Dasha information                                     │
+│ - Current Mahadasha (main period)                                          │
+│ - Current Bhukti (sub-period)                                              │
+│ - Current Pratyantar (sub-sub-period)                                      │
+│ - Full 120-year Mahadasha sequence                                         │
+│ - All Bhuktis for current Mahadasha                                        │
+│                                                                            │
+│ Example:                                                                   │
+│ /dasha?year=1993&month=10&day=29&hour=6&minute=45&lat=8.964&lon=77.315   │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ 5. PANCHANGAM                                                              │
+├────────────────────────────────────────────────────────────────────────────┤
+│ GET /panchangam                                                            │
+│                                                                            │
+│ Returns: Five elements of time                                             │
+│ - Tithi (lunar day)                                                        │
+│ - Vara (day of week)                                                       │
+│ - Nakshatra (lunar mansion)                                                │
+│ - Yoga (auspicious indicator)                                              │
+│ - Karana (half tithi)                                                      │
+│                                                                            │
+│ Example:                                                                   │
+│ /panchangam?year=1993&month=10&day=29&hour=6&minute=45&lat=8.964&lon=77.315
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ 6. PLANETARY POSITIONS                                                     │
+├────────────────────────────────────────────────────────────────────────────┤
+│ GET /planetary-positions                                                   │
+│                                                                            │
+│ Returns: Detailed planetary positions                                      │
+│ - 9 planets: Sun, Moon, Mars, Mercury, Jupiter, Venus, Saturn, Rahu, Ketu │
+│ - Longitude (0-360°)                                                       │
+│ - Zodiac sign                                                              │
+│ - Degree, minute, second                                                   │
+│ - Nakshatra and Pada                                                       │
+│ - Nakshatra lord                                                           │
+│                                                                            │
+│ Example:                                                                   │
+│ /planetary-positions?year=1993&month=10&day=29&hour=6&minute=45&lat=8.964&lon=77.315
+└────────────────────────────────────────────────────────────────────────────┘
+
+╔════════════════════════════════════════════════════════════════════════════╗
+║                          REQUIRED PARAMETERS                               ║
+╠════════════════════════════════════════════════════════════════════════════╣
+║ Parameter │ Type    │ Description              │ Example                   ║
+╠═══════════╪═════════╪══════════════════════════╪═══════════════════════════╣
+║ year      │ Integer │ Birth year               │ 1993                      ║
+║ month     │ Integer │ Birth month (1-12)       │ 10                        ║
+║ day       │ Integer │ Birth day (1-31)         │ 29                        ║
+║ hour      │ Integer │ Birth hour (0-23)        │ 6                         ║
+║ minute    │ Integer │ Birth minute (0-59)      │ 45                        ║
+║ lat       │ Float   │ Latitude                 │ 8.964                     ║
+║ lon       │ Float   │ Longitude                │ 77.315                    ║
+║ tz        │ Float   │ Timezone (optional)      │ 5.5                       ║
+╚═══════════╧═════════╧══════════════════════════╧═══════════════════════════╝
+
+╔════════════════════════════════════════════════════════════════════════════╗
+║                          QUICK TEST COMMANDS                               ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+# Start server
+npm start
+
+# Test complete endpoint
+curl "http://localhost:3000/api/astrology/complete?year=1993&month=10&day=29&hour=6&minute=45&lat=8.964&lon=77.315&tz=5.5"
+
+# Test Rasi Chart
+curl "http://localhost:3000/api/astrology/rasi-chart?year=1993&month=10&day=29&hour=6&minute=45&lat=8.964&lon=77.315"
+
+# Test Navamsa Chart
+curl "http://localhost:3000/api/astrology/navamsa-chart?year=1993&month=10&day=29&hour=6&minute=45&lat=8.964&lon=77.315"
+
+# Test Dasha
+curl "http://localhost:3000/api/astrology/dasha?year=1993&month=10&day=29&hour=6&minute=45&lat=8.964&lon=77.315"
+
+# Test Panchangam
+curl "http://localhost:3000/api/astrology/panchangam?year=1993&month=10&day=29&hour=6&minute=45&lat=8.964&lon=77.315"
+
+# Test Planetary Positions
+curl "http://localhost:3000/api/astrology/planetary-positions?year=1993&month=10&day=29&hour=6&minute=45&lat=8.964&lon=77.315"
+
+╔════════════════════════════════════════════════════════════════════════════╗
+║                          RESPONSE FORMAT                                   ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+All responses are in JSON format with HTTP status 200 (success) or 400 (error).
+
+Success Response:
+{
+  "birthDetails": { ... },
+  "planetaryPositions": { ... },
+  "rasiChart": { ... },
+  "navamsaChart": { ... },
+  "panchangam": { ... },
+  "dashaSystem": { ... },
+  "nakshatraDetails": { ... }
+}
+
+Error Response:
+{
+  "error": "Missing required parameters: year, month, day, lat, lon"
+}
+
+╔════════════════════════════════════════════════════════════════════════════╗
+║                          DOCUMENTATION                                     ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+1. VEDIC_ASTROLOGY_API_README.md    - Main overview & getting started
+2. ASTROLOGY_API_DOCS.md            - Complete technical documentation
+3. QUICK_START.md                   - Fast setup guide
+4. EXAMPLE_RESPONSES.md             - Real JSON response examples
+5. TEST_API.md                      - Comprehensive testing guide
+6. API_SUMMARY.md                   - Quick reference
+7. DOCUMENTATION_INDEX.md           - Navigation guide
+
+╔════════════════════════════════════════════════════════════════════════════╗
+║                          STATUS: ✅ READY TO USE                           ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+Version: 1.0.0
+Last Updated: December 5, 2025
