@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vimshottari Dasha Calculator</title>
+    <title>🌟 Vedic Astrology Calculator</title>
     <style>
         * {
             margin: 0;
@@ -20,7 +20,7 @@
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1200px;
             margin: 0 auto;
             background: white;
             border-radius: 15px;
@@ -31,12 +31,26 @@
         h1 {
             color: #667eea;
             text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
             margin-bottom: 30px;
-            font-size: 2em;
+            font-size: 1.1em;
+        }
+
+        .form-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         label {
@@ -76,6 +90,7 @@
             font-weight: 600;
             cursor: pointer;
             margin-top: 10px;
+            transition: all 0.3s ease;
         }
 
         button:hover {
@@ -85,10 +100,49 @@
 
         .result {
             margin-top: 30px;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 10px;
             display: none;
+        }
+
+        .section {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .birth-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .detail-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .detail-label {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .detail-value {
+            color: #333;
+            font-weight: 600;
+            font-size: 1.1em;
         }
 
         .current-dasha {
@@ -99,12 +153,89 @@
             margin-bottom: 20px;
         }
 
+        .current-dasha h3 {
+            margin-top: 15px;
+            margin-bottom: 5px;
+            font-size: 1.2em;
+        }
+
+        .current-dasha p {
+            margin-bottom: 10px;
+            opacity: 0.95;
+        }
+
         .dasha-item {
             padding: 15px;
             margin: 10px 0;
-            background: white;
+            background: #f8f9fa;
             border-left: 4px solid #667eea;
             border-radius: 5px;
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            gap: 15px;
+        }
+
+        .dasha-lord {
+            font-weight: 600;
+            color: #667eea;
+            font-size: 1.1em;
+        }
+
+        .dasha-dates {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .planets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .planet-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .planet-name {
+            font-weight: 600;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        .planet-info {
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+
+        .panchangam-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .panchangam-item {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .panchangam-label {
+            font-size: 0.85em;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .panchangam-value {
+            font-weight: 600;
+            font-size: 1.1em;
         }
 
         .loading {
@@ -112,93 +243,137 @@
             color: #667eea;
             font-size: 18px;
             display: none;
+            padding: 20px;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            background: #f8f9fa;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
         }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <h1>🌟 Vimshottari Dasha Calculator</h1>
-        <code> https://apidash-production.up.railway.app/api/vimshottari</code>
+        <h1>🌟 வேத ஜோதிடம் கணக்கீடு</h1>
+        <p class="subtitle">Vedic Astrology Calculator - Complete Birth Chart Analysis</p>
 
-        <code>
-            Payload:
-   year
-1993
-month
-10
-day
-29
-hour
-6
-minute
-45
-lat
-8.964
-lon
-77.315
-tz
-5.5
-</code>
-        <form id="dashaForm">
-            <div class="row">
-                <div class="form-group">
-                    <label>வருடம் (Year)</label>
-                    <input type="number" id="year" value="1993" required>
-                </div>
-                <div class="form-group">
-                    <label>மாதம் (Month)</label>
-                    <input type="number" id="month" value="10" min="1" max="12" required>
-                </div>
-                <div class="form-group">
-                    <label>நாள் (Day)</label>
-                    <input type="number" id="day" value="29" min="1" max="31" required>
-                </div>
-            </div>
+        <div class="form-section">
+            <form id="dashaForm">
+                <h3 style="color: #667eea; margin-bottom: 15px;">📅 பிறப்பு விவரங்கள் (Birth Details)</h3>
 
-            <div class="row">
-                <div class="form-group">
-                    <label>மணி (Hour)</label>
-                    <input type="number" id="hour" value="6" min="0" max="23" required>
+                <div class="row">
+                    <div class="form-group">
+                        <label>வருடம் (Year)</label>
+                        <input type="number" id="year" value="2025" required>
+                    </div>
+                    <div class="form-group">
+                        <label>மாதம் (Month)</label>
+                        <input type="number" id="month" value="12" min="1" max="12" required>
+                    </div>
+                    <div class="form-group">
+                        <label>நாள் (Day)</label>
+                        <input type="number" id="day" value="4" min="1" max="31" required>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>நிமிடம் (Minute)</label>
-                    <input type="number" id="minute" value="45" min="0" max="59" required>
-                </div>
-            </div>
 
-            <div class="row">
-                <div class="form-group">
-                    <label>Latitude</label>
-                    <input type="number" step="0.001" id="lat" value="8.964" required>
+                <div class="row">
+                    <div class="form-group">
+                        <label>மணி (Hour)</label>
+                        <input type="number" id="hour" value="12" min="0" max="23" required>
+                    </div>
+                    <div class="form-group">
+                        <label>நிமிடம் (Minute)</label>
+                        <input type="number" id="minute" value="0" min="0" max="59" required>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>Longitude</label>
-                    <input type="number" step="0.001" id="lon" value="77.315" required>
-                </div>
-                <div class="form-group">
-                    <label>Timezone</label>
-                    <input type="number" step="0.5" id="tz" value="5.5" required>
-                </div>
-            </div>
 
-            <button type="submit">கணக்கிடு (Calculate)</button>
-        </form>
+                <div class="row">
+                    <div class="form-group">
+                        <label>Latitude</label>
+                        <input type="number" step="0.001" id="lat" value="13.0827" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Longitude</label>
+                        <input type="number" step="0.001" id="lon" value="80.2707" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Timezone</label>
+                        <input type="number" step="0.5" id="tz" value="5.5" required>
+                    </div>
+                </div>
 
-        <div class="loading" id="loading">⏳ கணக்கிடப்படுகிறது...</div>
+                <button type="submit">🔮 கணக்கிடு (Calculate)</button>
+            </form>
+        </div>
+
+        <div class="loading" id="loading">⏳ கணக்கிடப்படுகிறது... (Calculating...)</div>
+        <div class="error" id="error"></div>
 
         <div class="result" id="result"></div>
     </div>
 
     <script>
+        const formatDate = (dateStr) => {
+            if (!dateStr) return 'N/A';
+            return new Date(dateStr).toLocaleDateString('ta-IN', {
+                year: 'numeric', month: 'long', day: 'numeric'
+            });
+        };
+
+        const getPlanetEmoji = (planet) => {
+            const emojis = {
+                'Sun': '☀️', 'Moon': '🌙', 'Mars': '♂️', 'Mercury': '☿️',
+                'Jupiter': '♃', 'Venus': '♀️', 'Saturn': '♄', 'Rahu': '🐉', 'Ketu': '🐲'
+            };
+            return emojis[planet] || '⭐';
+        };
+
         document.getElementById('dashaForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
             const loading = document.getElementById('loading');
             const result = document.getElementById('result');
+            const error = document.getElementById('error');
 
             loading.style.display = 'block';
             result.style.display = 'none';
+            error.style.display = 'none';
 
             const params = new URLSearchParams({
                 year: document.getElementById('year').value,
@@ -212,48 +387,188 @@ tz
             });
 
             try {
-                const response = await fetch(`/api/vimshottari/current?${params}`);
+                const response = await fetch(`/api/astrology/complete?${params}`);
+                if (!response.ok) throw new Error('API Error');
                 const data = await response.json();
 
                 loading.style.display = 'none';
                 result.style.display = 'block';
 
-                const formatDate = (dateStr) => new Date(dateStr).toLocaleDateString('ta-IN', {
-                    year: 'numeric', month: 'long', day: 'numeric'
-                });
+                let html = '';
 
-                result.innerHTML = `
-                    <div class="current-dasha">
-                        <h2>🔮 இப்போது நடக்கும் தசா</h2>
-                        <h3>மகா தசா: ${data.current.mahadasha.lord}</h3>
-                        <p>${formatDate(data.current.mahadasha.start)} - ${formatDate(data.current.mahadasha.end)}</p>
-                        <h3>புக்தி: ${data.current.bhukti.lord}</h3>
-                        <p>${formatDate(data.current.bhukti.start)} - ${formatDate(data.current.bhukti.end)}</p>
-                        ${data.current.pratyantar ? `
-                            <h3>பிரத்யந்தர: ${data.current.pratyantar.lord}</h3>
-                            <p>${formatDate(data.current.pratyantar.start)} - ${formatDate(data.current.pratyantar.end)}</p>
-                        ` : ''}
+                // Birth Details Section
+                html += `
+                    <div class="section">
+                        <h2>📅 பிறப்பு விவரங்கள் (Birth Details)</h2>
+                        <div class="birth-details">
+                            <div class="detail-item">
+                                <div class="detail-label">தேதி (Date)</div>
+                                <div class="detail-value">${data.birthDetails.date}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">நேரம் (Time)</div>
+                                <div class="detail-value">${data.birthDetails.time}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">அட்சரேகை (Latitude)</div>
+                                <div class="detail-value">${data.birthDetails.latitude}°</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">தீர்க்கரேகை (Longitude)</div>
+                                <div class="detail-value">${data.birthDetails.longitude}°</div>
+                            </div>
+                        </div>
                     </div>
                 `;
 
-                // Get all mahadashas
-                const mahaResponse = await fetch(`/api/vimshottari/mahadashas?${params}`);
-                const mahaData = await mahaResponse.json();
-
-                result.innerHTML += '<h2>எல்லா மகா தசாக்கள்</h2>';
-                mahaData.mahadashas.forEach(maha => {
-                    result.innerHTML += `
-                        <div class="dasha-item">
-                            <strong>${maha.lord}</strong> - ${maha.years} வருடங்கள்<br>
-                            <small>${formatDate(maha.start)} - ${formatDate(maha.end)}</small>
+                // Ascendant Section
+                html += `
+                    <div class="section">
+                        <h2>🏠 உச்ச (Ascendant/Lagna)</h2>
+                        <div class="birth-details">
+                            <div class="detail-item">
+                                <div class="detail-label">ராசி (Sign)</div>
+                                <div class="detail-value">${data.ascendant.sign}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">பாகை (Degree)</div>
+                                <div class="detail-value">${data.ascendant.degree.toFixed(2)}° ${data.ascendant.minute}'</div>
+                            </div>
                         </div>
-                    `;
-                });
+                    </div>
+                `;
 
-            } catch (error) {
+                // Current Dasha Section
+                html += `
+                    <div class="section">
+                        <h2>🔮 இப்போது நடக்கும் தசா (Current Dasha)</h2>
+                        <div class="current-dasha">
+                            <h3>மகா தசா (Mahadasha): ${data.dashaSystem.current.mahadasha.lord}</h3>
+                            <p>📅 ${formatDate(data.dashaSystem.current.mahadasha.start)} - ${formatDate(data.dashaSystem.current.mahadasha.end)}</p>
+                            <p>⏱️ ${data.dashaSystem.current.mahadasha.years} வருடங்கள்</p>
+
+                            <h3>புக்தி (Bhukti): ${data.dashaSystem.current.bhukti.lord}</h3>
+                            <p>📅 ${formatDate(data.dashaSystem.current.bhukti.start)} - ${formatDate(data.dashaSystem.current.bhukti.end)}</p>
+                            <p>⏱️ ${data.dashaSystem.current.bhukti.years} வருடங்கள்</p>
+
+                            ${data.dashaSystem.current.pratyantar ? `
+                                <h3>பிரத்யந்தர (Pratyantar): ${data.dashaSystem.current.pratyantar.lord}</h3>
+                                <p>📅 ${formatDate(data.dashaSystem.current.pratyantar.start)} - ${formatDate(data.dashaSystem.current.pratyantar.end)}</p>
+                                <p>⏱️ ${data.dashaSystem.current.pratyantar.years} வருடங்கள்</p>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+
+                // Mahadasha Sequence
+                html += `
+                    <div class="section">
+                        <h2>📊 மகா தசா வரிசை (Mahadasha Sequence)</h2>
+                        ${data.dashaSystem.sequence.map(m => `
+                            <div class="dasha-item">
+                                <div class="dasha-lord">${m.lord}</div>
+                                <div>
+                                    <div class="dasha-dates">📅 ${formatDate(m.start)} - ${formatDate(m.end)}</div>
+                                    <div class="dasha-dates">⏱️ ${m.years} வருடங்கள்</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+
+                // Panchangam Section
+                html += `
+                    <div class="section">
+                        <h2>📿 பஞ்சாங்கம் (Panchangam)</h2>
+                        <div class="panchangam-grid">
+                            <div class="panchangam-item">
+                                <div class="panchangam-label">திதி (Tithi)</div>
+                                <div class="panchangam-value">${data.panchangam.data.tithiName}</div>
+                            </div>
+                            <div class="panchangam-item">
+                                <div class="panchangam-label">வாரம் (Vara)</div>
+                                <div class="panchangam-value">${data.panchangam.data.vara}</div>
+                            </div>
+                            <div class="panchangam-item">
+                                <div class="panchangam-label">நக்ஷத்ரம் (Nakshatra)</div>
+                                <div class="panchangam-value">${data.panchangam.data.nakshatra}</div>
+                            </div>
+                            <div class="panchangam-item">
+                                <div class="panchangam-label">யோகம் (Yoga)</div>
+                                <div class="panchangam-value">${data.panchangam.data.yoga}</div>
+                            </div>
+                            <div class="panchangam-item">
+                                <div class="panchangam-label">கரணம் (Karana)</div>
+                                <div class="panchangam-value">${data.panchangam.data.karana}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // Planetary Positions Section
+                html += `
+                    <div class="section">
+                        <h2>🪐 கிரக நிலைகள் (Planetary Positions)</h2>
+                        <div class="planets-grid">
+                            ${Object.entries(data.planetaryPositions.detailed).map(([planet, pos]) => `
+                                <div class="planet-card">
+                                    <div class="planet-name">${getPlanetEmoji(planet)} ${planet}</div>
+                                    <div class="planet-info">
+                                        <div>ராசி: ${pos.sign}</div>
+                                        <div>பாகை: ${pos.degree.toFixed(1)}°</div>
+                                        <div>நக்ஷத்ரம்: ${pos.nakshatra}</div>
+                                        <div>பாதம்: ${pos.nakshatraPada}</div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+
+                // Rasi Chart Section
+                html += `
+                    <div class="section">
+                        <h2>📈 ராசி சக்ரம் (Rasi Chart - D1)</h2>
+                        <div class="planets-grid">
+                            ${Object.entries(data.rasiChart.planets).map(([planet, pos]) => `
+                                <div class="planet-card">
+                                    <div class="planet-name">${getPlanetEmoji(planet)} ${planet}</div>
+                                    <div class="planet-info">
+                                        <div>ராசி: ${pos.sign}</div>
+                                        <div>பாகை: ${pos.degree.toFixed(1)}°</div>
+                                        <div>நிமிடம்: ${pos.minute}'</div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+
+                // Navamsa Chart Section
+                html += `
+                    <div class="section">
+                        <h2>💑 நவாம்ச சக்ரம் (Navamsa Chart - D9)</h2>
+                        <div class="planets-grid">
+                            ${Object.entries(data.navamsaChart.planets).map(([planet, pos]) => `
+                                <div class="planet-card">
+                                    <div class="planet-name">${getPlanetEmoji(planet)} ${planet}</div>
+                                    <div class="planet-info">
+                                        <div>ராசி: ${pos.sign}</div>
+                                        <div>பாகை: ${pos.degree.toFixed(1)}°</div>
+                                        <div>நவாம்ச: ${pos.navamsaNumber}</div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+
+                result.innerHTML = html;
+
+            } catch (err) {
                 loading.style.display = 'none';
-                result.style.display = 'block';
-                result.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+                error.style.display = 'block';
+                error.innerHTML = `<strong>❌ Error:</strong> ${err.message}. Please check your input and try again.`;
             }
         });
     </script>
