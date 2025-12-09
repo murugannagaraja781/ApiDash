@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="ta">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💑 Marriage Porutham Matcher</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #FF9A9E 0%, #FECFEF 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .header-nav {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+
+        .header-nav a {
+            text-decoration: none;
+            color: #ff6b6b;
+            font-weight: bold;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .header-nav a:hover {
+            transform: translateY(-2px);
+        }
+
+        h1 {
+            color: #ff6b6b;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+
+        .match-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .match-form {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .profile-section {
+            background: #fff5f5;
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid #ffe3e3;
+        }
+
+        .profile-section h2 {
+            color: #ff6b6b;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #ff6b6b;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .calculate-btn {
+            grid-column: 1 / -1;
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #ff9a9e 0%, #ff6b6b 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.6);
+        }
+
+        /* Results Styling */
+        .result-container {
+            margin-top: 40px;
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .score-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+            font-weight: 800;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .stars-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .star-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            text-align: center;
+            border-left: 5px solid #ff6b6b;
+        }
+
+        .star-card h3 {
+            color: #666;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .star-value {
+            color: #333;
+            font-size: 1.2em;
+            font-weight: 700;
+        }
+
+        .porutham-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .porutham-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #eee;
+            transition: transform 0.2s;
+        }
+
+        .porutham-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .porutham-name {
+            font-weight: 700;
+            color: #444;
+            font-size: 1.1em;
+        }
+
+        .porutham-status {
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        .status-good {
+            background: #e6fcf5;
+            color: #0ca678;
+        }
+
+        .status-bad {
+            background: #fff5f5;
+            color: #fa5252;
+        }
+
+        .status-desc {
+            font-size: 0.8em;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.2em;
+            color: #666;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header-nav">
+            <a href="index.html">← Back to Chart Calculator</a>
+        </div>
+
+        <h1>💑 திருமணப் பொருத்தம்</h1>
+        <p class="subtitle">Vedic Marriage Compatibility (Porutham) Checker</p>
+
+        <form id="matchForm">
+            <div class="match-form">
+                <!-- Boy Details -->
+                <div class="profile-section">
+                    <h2>🤵 Boy's Details</h2>
+
+                    <div class="row">
+                        <div class="form-group">
+                            <label>Year</label>
+                            <input type="number" id="b_year" value="1995" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Month</label>
+                            <input type="number" id="b_month" value="10" min="1" max="12" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group">
+                            <label>Day</label>
+                            <input type="number" id="b_day" value="25" min="1" max="31" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Hour (24h)</label>
+                            <input type="number" id="b_hour" value="14" min="0" max="23" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group">
+                            <label>Minute</label>
+                            <input type="number" id="b_minute" value="30" min="0" max="59" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Latitude</label>
+                            <input type="number" step="0.001" id="b_lat" value="13.0827" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group">
+                            <label>Longitude</label>
+                            <input type="number" step="0.001" id="b_lon" value="80.2707" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Timezone</label>
+                            <input type="number" step="0.5" id="b_tz" value="5.5" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Girl Details -->
+                <div class="profile-section" style="background: #fff0f6; border-color: #ffdeeb;">
+                    <h2>👰 Girl's Details</h2>
+
+                    <div class="row">
+                        <div class="form-group">
+                            <label>Year</label>
+                            <input type="number" id="g_year" value="1998" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Month</label>
+                            <input type="number" id="g_month" value="5" min="1" max="12" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group">
+                            <label>Day</label>
+                            <input type="number" id="g_day" value="15" min="1" max="31" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Hour (24h)</label>
+                            <input type="number" id="g_hour" value="9" min="0" max="23" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group">
+                            <label>Minute</label>
+                            <input type="number" id="g_minute" value="15" min="0" max="59" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Latitude</label>
+                            <input type="number" step="0.001" id="g_lat" value="13.0827" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group">
+                            <label>Longitude</label>
+                            <input type="number" step="0.001" id="g_lon" value="80.2707" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Timezone</label>
+                            <input type="number" step="0.5" id="g_tz" value="5.5" required>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="calculate-btn">❤️ Check Compatibility (பொருத்தம் பார்க்க)</button>
+            </div>
+        </form>
+
+        <div id="loading" class="loading">
+            Calculating Compatibility... Please Wait... 💫
+        </div>
+
+        <div id="results" class="result-container">
+            <!-- Content filled by JS -->
+        </div>
+
+    </div>
+
+    <script>
+        document.getElementById('matchForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const loading = document.getElementById('loading');
+            const resultsDiv = document.getElementById('results');
+
+            loading.style.display = 'block';
+            resultsDiv.style.display = 'none';
+
+            const getVal = (id) => parseFloat(document.getElementById(id).value);
+
+            const payload = {
+                boy: {
+                    year: getVal('b_year'), month: getVal('b_month'), day: getVal('b_day'),
+                    hour: getVal('b_hour'), minute: getVal('b_minute'),
+                    lat: getVal('b_lat'), lon: getVal('b_lon'), tz: getVal('b_tz')
+                },
+                girl: {
+                    year: getVal('g_year'), month: getVal('g_month'), day: getVal('g_day'),
+                    hour: getVal('g_hour'), minute: getVal('g_minute'),
+                    lat: getVal('g_lat'), lon: getVal('g_lon'), tz: getVal('g_tz')
+                }
+            };
+
+            try {
+                const response = await fetch('/api/match/porutham', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                if(!response.ok) throw new Error(data.error || 'Failed to calculate');
+
+                renderResults(data);
+
+            } catch (error) {
+                alert('Error: ' + error.message);
+            } finally {
+                loading.style.display = 'none';
+            }
+        });
+
+        function renderResults(data) {
+            const resultsDiv = document.getElementById('results');
+            const match = data.match;
+
+            let html = `
+                <div class="stars-info">
+                    <div class="star-card">
+                        <h3>Boy's Star</h3>
+                        <div class="star-value">${data.boy.nakshatra}</div>
+                        <div>${data.boy.rasi} Rasi</div>
+                    </div>
+                    <div class="star-card">
+                        <h3>Girl's Star</h3>
+                        <div class="star-value">${data.girl.nakshatra}</div>
+                        <div>${data.girl.rasi} Rasi</div>
+                    </div>
+                </div>
+
+                <div class="score-card">
+                    <div class="score-circle">
+                        ${match.percentage}%
+                    </div>
+                    <h2>Compatibility Score</h2>
+                    <p>${match.totalScore} / ${match.maxScore} Points</p>
+                    <p style="margin-top: 10px; opacity: 0.9;">
+                        ${match.percentage > 60 ? '✨ Excellent Match!' : match.percentage > 40 ? '👍 Average Match' : '⚠️ Low Compatibility'}
+                    </p>
+                </div>
+
+                <h3 style="margin-bottom: 20px; color: #555;">Detailed Porutham Analysis:</h3>
+                <div class="porutham-grid">
+            `;
+
+            const poruthams = [
+                { key: 'dina', label: 'Dina (Health)' },
+                { key: 'gana', label: 'Gana (Temperament)' },
+                { key: 'mahendra', label: 'Mahendra (Progeny)' },
+                { key: 'streeDeergha', label: 'Stree Deergha (Wellbeing)' },
+                { key: 'yoni', label: 'Yoni (Physical)' },
+                { key: 'rasi', label: 'Rasi (Harmony)' },
+                { key: 'rasiAdhipati', label: 'Rasi Lord (Friendship)' },
+                { key: 'vashya', label: 'Vashya (Attraction)' },
+                { key: 'rajju', label: 'Rajju (Longevity)' },
+                { key: 'vedha', label: 'Vedha (Obstruction)' }
+            ];
+
+            poruthams.forEach(p => {
+                const result = match[p.key];
+                const isGood = result.status;
+                const statusClass = isGood ? 'status-good' : 'status-bad';
+                const icon = isGood ? '✅' : '❌';
+
+                html += `
+                    <div class="porutham-card">
+                        <div>
+                            <div class="porutham-name">${p.label}</div>
+                            <div class="status-desc">${result.description}</div>
+                        </div>
+                        <div class="porutham-status ${statusClass}">
+                            ${icon} ${isGood ? 'Good' : 'Bad'}
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `</div>`;
+
+            resultsDiv.innerHTML = html;
+            resultsDiv.style.display = 'block';
+
+            // Scroll to results
+            resultsDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+
+</html>

@@ -18,6 +18,7 @@ app.use(express.static("public"));
 // Routes
 app.use("/api/vimshottari", vimshottariRouter);
 app.use("/api/astrology", astrologyRouter);
+app.use("/api/match", require("./routes/match"));
 
 // API info endpoint
 app.get("/api", (req, res) => {
