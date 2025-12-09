@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="ta">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔮 Daily Horoscope (ராசிபலன்)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .header-nav {
+            text-align: right;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .header-nav a {
+            text-decoration: none;
+            color: #9b59b6;
+            font-weight: bold;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+            font-size: 0.9em;
+        }
+
+        .header-nav a:hover {
+            transform: translateY(-2px);
+        }
+
+        h1 {
+            color: #8e44ad;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.2em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+
+        .input-card {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border: 2px solid #eee;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .tab-btn {
+            padding: 10px 25px;
+            border: none;
+            background: #e9ecef;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background: #8e44ad;
+            color: white;
+            box-shadow: 0 4px 10px rgba(142, 68, 173, 0.3);
+        }
+
+        .form-section {
+            display: none;
+        }
+
+        .form-section.active {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #8e44ad;
+        }
+
+        button.submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #a18cd1 0%, #8e44ad 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        button.submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(142, 68, 173, 0.4);
+        }
+
+        /* Results */
+        .result-container {
+            display: none;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .summary-card {
+            background: #f3e5f5;
+            border-left: 5px solid #8e44ad;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .rasi-badge {
+            display: inline-block;
+            background: #8e44ad;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .summary-text {
+            font-size: 1.3em;
+            color: #333;
+            font-weight: 600;
+            line-height: 1.5;
+        }
+
+        .transit-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .planet-card {
+            background: white;
+            border: 1px solid #eee;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s;
+        }
+
+        .planet-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .planet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .planet-name {
+            font-weight: 700;
+            color: #8e44ad;
+            font-size: 1.1em;
+        }
+
+        .house-badge {
+            background: #eee;
+            color: #666;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+        }
+
+        .prediction-text {
+            color: #444;
+            line-height: 1.5;
+            font-size: 1.05em;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            font-size: 1.2em;
+            color: #666;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header-nav">
+            <a href="index.html">🏠 Home</a>
+            <a href="match.html">💑 Compatibility</a>
+        </div>
+
+        <h1>🔮 தினசரி ராசிபலன்</h1>
+        <p class="subtitle">Daily Horoscope Prediction</p>
+
+        <div class="input-card">
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('rasi')">Select Rasi</button>
+                <button class="tab-btn" onclick="switchTab('birth')">Birth Details</button>
+            </div>
+
+            <!-- Mode 1: Select Rasi -->
+            <div id="rasiForm" class="form-section active">
+                <div class="form-group">
+                    <label>உங்கள் ராசி (Select Your Rasi)</label>
+                    <select id="userRasi">
+                        <option value="Aries">மேஷம் (Aries)</option>
+                        <option value="Taurus">ரிஷபம் (Taurus)</option>
+                        <option value="Gemini">மிதுனம் (Gemini)</option>
+                        <option value="Cancer">கடகம் (Cancer)</option>
+                        <option value="Leo">சிம்மம் (Leo)</option>
+                        <option value="Virgo">கன்னி (Virgo)</option>
+                        <option value="Libra">துலாம் (Libra)</option>
+                        <option value="Scorpio">விருச்சிகம் (Scorpio)</option>
+                        <option value="Sagittarius">தனுசு (Sagittarius)</option>
+                        <option value="Capricorn">மகரம் (Capricorn)</option>
+                        <option value="Aquarius">கும்பம் (Aquarius)</option>
+                        <option value="Pisces">மீனம் (Pisces)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Mode 2: Birth Details -->
+            <div id="birthForm" class="form-section">
+                <div class="row">
+                    <div class="form-group">
+                        <label>Year</label>
+                        <input type="number" id="year" value="1990">
+                    </div>
+                    <div class="form-group">
+                        <label>Month</label>
+                        <input type="number" id="month" value="1" min="1" max="12">
+                    </div>
+                    <div class="form-group">
+                        <label>Day</label>
+                        <input type="number" id="day" value="1" min="1" max="31">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label>Hour (24h)</label>
+                        <input type="number" id="hour" value="12">
+                    </div>
+                    <div class="form-group">
+                        <label>Minute</label>
+                        <input type="number" id="minute" value="0">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 20px;">
+                <label>தேதி (Target Date)</label>
+                <input type="date" id="targetDate">
+            </div>
+
+            <button class="submit-btn" onclick="getHoroscope()">பலன் பார்க்க (Get Prediction)</button>
+        </div>
+
+        <div id="loading" class="loading">Loading predictions... 🔮</div>
+
+        <div id="result" class="result-container">
+            <!-- Results injected here -->
+        </div>
+
+    </div>
+
+    <script>
+        // Set today as default date
+        document.getElementById('targetDate').valueAsDate = new Date();
+
+        let activeMode = 'rasi';
+
+        function switchTab(mode) {
+            activeMode = mode;
+            // Update UI
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`button[onclick="switchTab('${mode}')"]`).classList.add('active');
+
+            document.querySelectorAll('.form-section').forEach(sec => sec.classList.remove('active'));
+            document.getElementById(mode + 'Form').classList.add('active');
+        }
+
+        async function getHoroscope() {
+            const loading = document.getElementById('loading');
+            const resultDiv = document.getElementById('result');
+
+            resultDiv.style.display = 'none';
+            loading.style.display = 'block';
+
+            const targetDate = document.getElementById('targetDate').value;
+            let payload = { targetDate };
+
+            if (activeMode === 'rasi') {
+                payload.rasi = document.getElementById('userRasi').value;
+            } else {
+                payload.birthDetails = {
+                    year: document.getElementById('year').value,
+                    month: document.getElementById('month').value,
+                    day: document.getElementById('day').value,
+                    hour: document.getElementById('hour').value,
+                    minute: document.getElementById('minute').value
+                };
+            }
+
+            try {
+                const response = await fetch('/api/horoscope/daily', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) throw new Error("Failed to fetch horoscope");
+                const data = await response.json();
+
+                renderResults(data);
+
+            } catch (error) {
+                alert('Error: ' + error.message);
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        const PLANET_EMOJIS = {
+            'Sun': '☀️', 'Moon': '🌙', 'Mars': '♂️',
+            'Jupiter': '♃', 'Saturn': '♄'
+        };
+
+        const RASI_TAMIL = {
+            'Aries': 'மேஷம்', 'Taurus': 'ரிஷபம்', 'Gemini': 'மிதுனம்',
+            'Cancer': 'கடகம்', 'Leo': 'சிம்மம்', 'Virgo': 'கன்னி',
+            'Libra': 'துலாம்', 'Scorpio': 'விருச்சிகம்', 'Sagittarius': 'தனுசு',
+            'Capricorn': 'மகரம்', 'Aquarius': 'கும்பம்', 'Pisces': 'மீனம்'
+        };
+
+        function renderResults(data) {
+            const resultDiv = document.getElementById('result');
+
+            let html = `
+                <div class="summary-card">
+                    <div class="rasi-badge">${RASI_TAMIL[data.userRasi]} (${data.userRasi})</div>
+                    <div class="summary-text">${data.summary}</div>
+                </div>
+
+                <h3 style="margin-bottom: 20px; color: #555;">கிரக பலன்கள் (Planetary Effects):</h3>
+                <div class="transit-grid">
+            `;
+
+            data.transits.forEach(t => {
+                html += `
+                    <div class="planet-card">
+                        <div class="planet-header">
+                            <div class="planet-name">${PLANET_EMOJIS[t.planet] || '⭐'} ${t.planet}</div>
+                            <div class="house-badge">${t.house}th House</div>
+                        </div>
+                        <div style="font-size: 0.9em; color: #888; margin-bottom: 8px;">
+                            Currently in ${t.currentSign}
+                        </div>
+                        <div class="prediction-text">${t.effect}</div>
+                    </div>
+                `;
+            });
+
+            html += `</div>`;
+            resultDiv.innerHTML = html;
+            resultDiv.style.display = 'block';
+        }
+    </script>
+</body>
+
+</html>
