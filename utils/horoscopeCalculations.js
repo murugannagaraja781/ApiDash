@@ -126,33 +126,60 @@ function calculateDailyHoroscope(userRasi, date, lat, lon) {
         });
     });
 
-    // 4. Generate Overall Summary (Tamil)
+    // 4. Generate Overall Summary (Tamil) - 3 Lines
     let overallScore = 0;
-    predictions.forEach(p => {
-        // Simple heuristic: Good houses typically give +10, Bad -5, Neutral 0
-        // Sun Good: 3, 6, 10, 11
-        // Moon Good: 1, 3, 6, 7, 10, 11 (Avoid 8)
-        // Mars Good: 3, 6, 11
-        // Jupiter Good: 2, 5, 7, 9, 11
-        // Saturn Good: 3, 6, 11
+    let goodPlanets = [];
+    let badPlanets = [];
 
-        // Just simple scoring for demo
+    predictions.forEach(p => {
+        // Score logic
         if (p.planet === "Moon" && p.house === 8) overallScore -= 20; // Chandrashtama
-        if (["3", "6", "11"].includes(String(p.house))) overallScore += 10;
-        if (["8", "12"].includes(String(p.house))) overallScore -= 5;
+        if (["3", "6", "11"].includes(String(p.house))) {
+            overallScore += 10;
+            goodPlanets.push(p.planet);
+        }
+        if (["8", "12"].includes(String(p.house))) {
+            overallScore -= 5;
+            badPlanets.push(p.planet);
+        }
+        if (["1", "5", "9"].includes(String(p.house)) && p.planet === "Jupiter") {
+            overallScore += 8;
+            goodPlanets.push("Jupiter");
+        }
     });
 
-    let summary = "";
-    if (overallScore > 15) summary = "இன்று உங்களுக்கு மிகச் சிறந்த நாள்! (Excellent Day)";
-    else if (overallScore > 0) summary = "இன்று உங்களுக்கு நல்ல நாள். (Good Day)";
-    else if (overallScore > -10) summary = "சராசரியான பலன்கள் நடக்கும். (Average Day)";
-    else summary = "கவனம் தேவை. இறை வழிபாடு செய்யவும். (Be Careful - Pray)";
+    // Line 1: Overall Verdict
+    let line1 = "";
+    if (overallScore > 15) line1 = "இன்று உங்களுக்கு மிகச் சிறந்த நாள்! எடுத்த காரியங்களில் வெற்றி கிடைக்கும்.";
+    else if (overallScore > 0) line1 = "இன்று உங்களுக்கு நல்ல நாள். குடும்பத்தில் மகிழ்ச்சி நிலவும்.";
+    else if (overallScore > -10) line1 = "இன்று பலன்கள் சமமாக இருக்கும். பொறுமையுடன் செயல்பட வேண்டும்.";
+    else line1 = "இன்று சற்று கவனமுடன் இருக்க வேண்டிய நாள். அலைச்சல் ஏற்படலாம்.";
 
-    // Check Chandrashtama specifically
+    // Line 2: Specific Influence
+    let line2 = "";
+    if (goodPlanets.includes("Jupiter")) line2 = "குரு பார்வையால் பண வரவு மற்றும் சுப காரியங்கள் கைகூடும்.";
+    else if (goodPlanets.includes("Sun")) line2 = "சூரியன் அருளால் உடல் ஆரோக்கியம் மற்றும் தைரியம் கூடும்.";
+    else if (goodPlanets.includes("Saturn")) line2 = "சனி பகவான் தொழில் மற்றும் வேலையில் வெற்றியை தருவார்.";
+    else if (badPlanets.includes("Mars")) line2 = "செவ்வாய் சாதகமற்ற நிலையில் இருப்பதால் கோபத்தை குறைப்பது நல்லது.";
+    else if (badPlanets.includes("Moon")) line2 = "சந்திரன் நிலையில் மாற்றங்கள் இருப்பதால் மன குழப்பம் வேண்டாம்.";
+    else line2 = "கிரக நிலைகள் சாதாரணமாக உள்ளன, நிதானம் தேவை.";
+
+    // Line 3: Remedy / Advice
+    let line3 = "";
+    if (overallScore < 0) line3 = "குலதெய்வ வழிபாடு மற்றும் தியானம் செய்வது நன்மை தரும்.";
+    else if (badPlanets.includes("Saturn")) line3 = "ஏழைகளுக்கு உதவி செய்வது மற்றும் காக்கைக்கு உணவிடுவது நல்லது.";
+    else if (goodPlanets.length > 2) line3 = "புதிய முயற்சிகளை தொடங்க இது ஏற்ற தருணம்.";
+    else line3 = "இன்று இறை வழிபாடு மற்றும் அமைதி காப்பது சிறப்பு.";
+
+    // Special Override for Chandrashtama
     const chandrashtama = predictions.find(p => p.planet === "Moon" && p.house === 8);
     if (chandrashtama) {
-        summary = "⚠️ இன்று சந்திராஷ்டமம். மௌனம் காக்கவும். புதிய முயற்சிகள் தவிர்க்கவும். (Chandrashtama - Keep silent, avoid new ventures)";
+        line1 = "⚠️ இன்று சந்திராஷ்டமம் உள்ளது.";
+        line2 = "மனம் படபடப்பாக மற்றும் சோர்வாக காணப்படலாம்.";
+        line3 = "புதிய முயற்சிகள் மற்றும் வாக்குவாதங்களை தவிர்ப்பது அவசியம்.";
     }
+
+    let summary = `${line1}\n${line2}\n${line3}`;
 
     return {
         date: date.toISOString().split('T')[0],
