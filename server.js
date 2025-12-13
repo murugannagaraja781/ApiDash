@@ -20,6 +20,7 @@ app.use("/api/vimshottari", vimshottariRouter);
 app.use("/api/astrology", astrologyRouter);
 app.use("/api/match", require("./routes/match"));
 app.use("/api/horoscope", require("./routes/horoscope"));
+app.use("/api/charts/birth-chart", require("./birth-chart/birthChartRoutes"));
 
 // API info endpoint
 app.get("/api", (req, res) => {

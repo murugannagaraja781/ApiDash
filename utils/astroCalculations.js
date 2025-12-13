@@ -196,7 +196,8 @@ function calculateMoonLongitude(date) {
 function calculateDaysSinceNewMoon(date) {
   const knownNewMoon = new Date(2000, 0, 6); // Known new moon date
   const daysSince = (date - knownNewMoon) / (1000 * 60 * 60 * 24);
-  return daysSince % 29.53;
+  const cycle = 29.53;
+  return ((daysSince % cycle) + cycle) % cycle;
 }
 
 /**

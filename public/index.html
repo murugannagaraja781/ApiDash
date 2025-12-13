@@ -367,7 +367,7 @@
         const getPlanetEmoji = (planet) => {
             const emojis = {
                 'Sun': '☀️', 'Moon': '🌙', 'Mars': '♂️', 'Mercury': '☿️',
-                'Jupiter': '♃', 'Venus': '♀️', 'Saturn': '♄', 'Rahu': '🐉', 'Ketu': '🐲'
+                'Jupiter': '♃', 'Venus': '♀️', 'Saturn': '♄', 'Rahu': '🐉', 'Ketu': '🐲', 'Lagna': '🏠'
             };
             return emojis[planet] || '⭐';
         };
@@ -383,7 +383,7 @@
             result.style.display = 'none';
             error.style.display = 'none';
 
-            const params = new URLSearchParams({
+            const payload = {
                 year: document.getElementById('year').value,
                 month: document.getElementById('month').value,
                 day: document.getElementById('day').value,
@@ -392,10 +392,15 @@
                 lat: document.getElementById('lat').value,
                 lon: document.getElementById('lon').value,
                 tz: document.getElementById('tz').value
-            });
+            };
 
             try {
-                const response = await fetch(`/api/astrology/complete?${params}`);
+                const response = await fetch('/api/charts/birth-chart', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
                 if (!response.ok) throw new Error('API Error');
                 const data = await response.json();
 
@@ -429,151 +434,103 @@
                     </div>
                 `;
 
-                // Ascendant Section
-                html += `
-                    <div class="section">
-                        <h2>🏠 உச்ச (Ascendant/Lagna)</h2>
-                        <div class="birth-details">
-                            <div class="detail-item">
-                                <div class="detail-label">ராசி (Sign)</div>
-                                <div class="detail-value">${data.ascendant.sign}</div>
-                            </div>
-                            <div class="detail-item">
-                                <div class="detail-label">பாகை (Degree)</div>
-                                <div class="detail-value">${data.ascendant.degree.toFixed(2)}° ${data.ascendant.minute}'</div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-
-                // Current Dasha Section
-                html += `
-                    <div class="section">
-                        <h2>🔮 இப்போது நடக்கும் தசா (Current Dasha)</h2>
-                        <div class="current-dasha">
-                            <h3>மகா தசா (Mahadasha): ${data.dashaSystem.current.mahadasha.lord}</h3>
-                            <p>📅 ${formatDate(data.dashaSystem.current.mahadasha.start)} - ${formatDate(data.dashaSystem.current.mahadasha.end)}</p>
-                            <p>⏱️ ${data.dashaSystem.current.mahadasha.years} வருடங்கள்</p>
-
-                            <h3>புக்தி (Bhukti): ${data.dashaSystem.current.bhukti.lord}</h3>
-                            <p>📅 ${formatDate(data.dashaSystem.current.bhukti.start)} - ${formatDate(data.dashaSystem.current.bhukti.end)}</p>
-                            <p>⏱️ ${data.dashaSystem.current.bhukti.years} வருடங்கள்</p>
-
-                            ${data.dashaSystem.current.pratyantar ? `
-                                <h3>பிரத்யந்தர (Pratyantar): ${data.dashaSystem.current.pratyantar.lord}</h3>
-                                <p>📅 ${formatDate(data.dashaSystem.current.pratyantar.start)} - ${formatDate(data.dashaSystem.current.pratyantar.end)}</p>
-                                <p>⏱️ ${data.dashaSystem.current.pratyantar.years} வருடங்கள்</p>
-                            ` : ''}
-                        </div>
-                    </div>
-                `;
-
-                // Mahadasha Sequence
-                html += `
-                    <div class="section">
-                        <h2>📊 மகா தசா வரிசை (Mahadasha Sequence)</h2>
-                        ${data.dashaSystem.sequence.map(m => `
-                            <div class="dasha-item">
-                                <div class="dasha-lord">${m.lord}</div>
-                                <div>
-                                    <div class="dasha-dates">📅 ${formatDate(m.start)} - ${formatDate(m.end)}</div>
-                                    <div class="dasha-dates">⏱️ ${m.years} வருடங்கள்</div>
+                // Panchangam Section
+                if (data.panchangam) {
+                    html += `
+                        <div class="section">
+                            <h2>📿 பஞ்சாங்கம் (Panchangam)</h2>
+                            <div class="panchangam-grid">
+                                <div class="panchangam-item">
+                                    <div class="panchangam-label">திதி (Tithi)</div>
+                                    <div class="panchangam-value">${data.panchangam.tithiName}</div>
+                                </div>
+                                <div class="panchangam-item">
+                                    <div class="panchangam-label">வாரம் (Vara)</div>
+                                    <div class="panchangam-value">${data.panchangam.vara}</div>
+                                </div>
+                                <div class="panchangam-item">
+                                    <div class="panchangam-label">நக்ஷத்ரம் (Nakshatra)</div>
+                                    <div class="panchangam-value">${data.panchangam.nakshatra}</div>
+                                </div>
+                                <div class="panchangam-item">
+                                    <div class="panchangam-label">யோகம் (Yoga)</div>
+                                    <div class="panchangam-value">${data.panchangam.yoga}</div>
+                                </div>
+                                <div class="panchangam-item">
+                                    <div class="panchangam-label">கரணம் (Karana)</div>
+                                    <div class="panchangam-value">${data.panchangam.karana}</div>
                                 </div>
                             </div>
-                        `).join('')}
-                    </div>
-                `;
-
-                // Panchangam Section
-                html += `
-                    <div class="section">
-                        <h2>📿 பஞ்சாங்கம் (Panchangam)</h2>
-                        <div class="panchangam-grid">
-                            <div class="panchangam-item">
-                                <div class="panchangam-label">திதி (Tithi)</div>
-                                <div class="panchangam-value">${data.panchangam.data.tithiName}</div>
-                            </div>
-                            <div class="panchangam-item">
-                                <div class="panchangam-label">வாரம் (Vara)</div>
-                                <div class="panchangam-value">${data.panchangam.data.vara}</div>
-                            </div>
-                            <div class="panchangam-item">
-                                <div class="panchangam-label">நக்ஷத்ரம் (Nakshatra)</div>
-                                <div class="panchangam-value">${data.panchangam.data.nakshatra}</div>
-                            </div>
-                            <div class="panchangam-item">
-                                <div class="panchangam-label">யோகம் (Yoga)</div>
-                                <div class="panchangam-value">${data.panchangam.data.yoga}</div>
-                            </div>
-                            <div class="panchangam-item">
-                                <div class="panchangam-label">கரணம் (Karana)</div>
-                                <div class="panchangam-value">${data.panchangam.data.karana}</div>
-                            </div>
                         </div>
-                    </div>
-                `;
+                    `;
+                }
 
                 // Planetary Positions Section
-                html += `
-                    <div class="section">
-                        <h2>🪐 கிரக நிலைகள் (Planetary Positions)</h2>
-                        <div class="planets-grid">
-                            ${Object.entries(data.planetaryPositions.detailed).map(([planet, pos]) => `
-                                <div class="planet-card">
-                                    <div class="planet-name">${getPlanetEmoji(planet)} ${planet}</div>
-                                    <div class="planet-info">
-                                        <div>ராசி: ${pos.sign}</div>
-                                        <div>பாகை: ${pos.degree.toFixed(1)}°</div>
-                                        <div>நக்ஷத்ரம்: ${pos.nakshatra}</div>
-                                        <div>பாதம்: ${pos.nakshatraPada}</div>
+                if (data.planetary_positions) {
+                    html += `
+                        <div class="section">
+                            <h2>🪐 கிரக நிலைகள் (Planetary Positions)</h2>
+                            <div class="planets-grid">
+                                ${Object.entries(data.planetary_positions).map(([planet, pos]) => `
+                                    <div class="planet-card">
+                                        <div class="planet-name">${getPlanetEmoji(planet)} ${planet}</div>
+                                        <div class="planet-info">
+                                            <div>ராசி: ${pos.sign}</div>
+                                            <div>பாகை: ${pos.degree}°</div>
+                                            <div>நக்ஷத்ரம்: ${pos.nakshatra}</div>
+                                            <div>பாதம்: ${pos.nakshatraPada}</div>
+                                        </div>
                                     </div>
-                                </div>
-                            `).join('')}
+                                `).join('')}
+                            </div>
                         </div>
-                    </div>
-                `;
+                    `;
+                }
 
                 // Rasi Chart Section
-                html += `
-                    <div class="section">
-                        <h2>📈 ராசி சக்ரம் (Rasi Chart - D1)</h2>
-                        <div class="planets-grid">
-                            ${Object.entries(data.rasiChart.planets).map(([planet, pos]) => `
-                                <div class="planet-card">
-                                    <div class="planet-name">${getPlanetEmoji(planet)} ${planet}</div>
-                                    <div class="planet-info">
-                                        <div>ராசி: ${pos.sign}</div>
-                                        <div>பாகை: ${pos.degree.toFixed(1)}°</div>
-                                        <div>நிமிடம்: ${pos.minute}'</div>
+                if (data.rasi_chart) {
+                    html += `
+                        <div class="section">
+                            <h2>📈 ராசி சக்ரம் (Rasi Chart - D1)</h2>
+                            <div class="planets-grid">
+                                ${Object.entries(data.rasi_chart).map(([planet, pos]) => `
+                                    <div class="planet-card">
+                                        <div class="planet-name">${getPlanetEmoji(planet)} ${planet}</div>
+                                        <div class="planet-info">
+                                            <div>ராசி: ${pos.sign}</div>
+                                            <div>பாகை: ${pos.degree.toFixed(2)}°</div>
+                                        </div>
                                     </div>
-                                </div>
-                            `).join('')}
+                                `).join('')}
+                            </div>
                         </div>
-                    </div>
-                `;
+                    `;
+                }
 
                 // Navamsa Chart Section
-                html += `
-                    <div class="section">
-                        <h2>💑 நவாம்ச சக்ரம் (Navamsa Chart - D9)</h2>
-                        <div class="planets-grid">
-                            ${Object.entries(data.navamsaChart.planets).map(([planet, pos]) => `
-                                <div class="planet-card">
-                                    <div class="planet-name">${getPlanetEmoji(planet)} ${planet}</div>
-                                    <div class="planet-info">
-                                        <div>ராசி: ${pos.sign}</div>
-                                        <div>பாகை: ${pos.degree.toFixed(1)}°</div>
-                                        <div>நவாம்ச: ${pos.navamsaNumber}</div>
+                if (data.navamsa_chart) {
+                    html += `
+                        <div class="section">
+                            <h2>💑 நவாம்ச சக்ரம் (Navamsa Chart - D9)</h2>
+                            <div class="planets-grid">
+                                ${Object.entries(data.navamsa_chart).map(([planet, pos]) => `
+                                    <div class="planet-card">
+                                        <div class="planet-name">${getPlanetEmoji(planet)} ${planet}</div>
+                                        <div class="planet-info">
+                                            <div>ராசி: ${pos.sign}</div>
+                                            <div>பாகை: ${pos.degree ? pos.degree.toFixed(2) : '0.00'}°</div>
+                                        </div>
                                     </div>
-                                </div>
-                            `).join('')}
+                                `).join('')}
+                            </div>
                         </div>
-                    </div>
-                `;
+                    `;
+                }
 
                 result.innerHTML = html;
 
             } catch (err) {
+                console.error(err);
                 loading.style.display = 'none';
                 error.style.display = 'block';
                 error.innerHTML = `<strong>❌ Error:</strong> ${err.message}. Please check your input and try again.`;
